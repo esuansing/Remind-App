@@ -1,0 +1,194 @@
+/* This goes in index.css */
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  /* A deep, moody gradient that looks great through glass */
+  background: radial-gradient(circle at top left, #2e1065, #0f172a);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: sans-serif;
+  overflow: hidden;
+}
+
+@keyframes float {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(20px, 30px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* Optional: Add some floating blobs to make the blur look cooler */
+.blob {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background: linear-gradient(#030303, #b1b8c4);
+  filter: blur(80px);
+  border-radius: 50%;
+  z-index: -1;
+  opacity: 0.4;
+  animation: float 10s infinite ease-in-out;
+}
+
+.login-title {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  color: white; /* This sets the color to solid white */
+  letter-spacing: -1px;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Sets the subtitle color with slight transparency for a better look */
+.login-subtitle {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.9); 
+  margin-bottom: 1rem;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Fixes the placeholder text (the "Email" and "Password" hints) */
+.glass-card input::placeholder {
+  color: white;
+}
+
+/* Your main glass rectangle (the base) */
+.glass-card {
+  background: rgba(30, 28, 28, 0.6); /* Darker base like the screenshot */
+  backdrop-filter: blur(20px);
+  border: 0.5px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  padding: 15px; /* Creates a small gap for the top layer */
+  width: 100%;
+  max-width: 450px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* The "Super Transparent" layer on top */
+.glass-layer-top {
+  background: rgba(255, 255, 255, 0.03); /* Extremely faint white */
+  backdrop-filter: blur(5px); /* Double blur effect */
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 40px;
+  text-align: center;
+  opacity: 1; /* Slightly less than 1 for a more subtle effect */
+}
+
+/* Make inputs look like the screenshot widgets */
+.glass-card input {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 15px;
+  color: white;
+  margin-bottom: 10px;
+  height: 25px;
+  width: 90%;
+}
+
+.glass-layer-top form > button {
+  background: linear-gradient(135deg, #303834, #0c0404);
+  border: none;
+  border-radius: 12px;
+  padding: 5px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  width: 75%;
+  
+  min-height: 30px; 
+  
+  margin: 2px auto 0 auto; 
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.875rem;
+  max-width: 320px;
+  transition: transform 0.2s;
+}
+
+
+.glass-card button:hover {
+  transform: scale(1.02);
+  filter: brightness(1.2);
+}
+
+.glass-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 7px;
+  gap: 0; /* Space between links and the | separator */
+}
+
+.glass-footer button {
+  background: none;
+  border: none;
+  color: #ffffff; /* Use #f47521 for the Crunchyroll orange if preferred */
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.025px;
+  text-transform: uppercase; /* Makes it look like the screenshot */
+  cursor: pointer;
+  padding: 0px 0px;
+  width: auto;      /* Resets width */
+  min-height: 0;    /* Resets height */
+  max-width: none;  /* Resets max-width */
+  transition: opacity 0.2s;
+}
+
+.glass-footer button:hover {
+  opacity: 0.8;
+  /* text-decoration: underline; */
+}
+
+.separator {
+  color: rgb(255, 255, 255);
+  font-size: 1rem;
+  font-weight: 500;
+  user-select: none;
+  margin: 0 5px;
+}
+
+.glass-layer-top form {
+  display: flex;
+  flex-direction: column; /* This forces the stacking */
+  align-items: center;    /* Keeps everything centered */
+  width: 100%;
+}
+
+/* Container for the message */
+.status-box {
+  padding: 12px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px); /* Matches your glass theme */
+  animation: slideDown 0.4s ease-out;
+}
+
+/* Error Style: Soft Red/Pink */
+.status-box.error {
+  background: rgba(255, 82, 82, 0.15);
+  border: 1px solid rgba(255, 82, 82, 0.3);
+  color: #ffb3b3;
+}
+
+/* Success Style: Soft Green */
+.status-box.success {
+  background: rgba(74, 222, 128, 0.15);
+  border: 1px solid rgba(74, 222, 128, 0.3);
+  color: #bbf7d0;
+}
+
+/* Smooth entry animation */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
