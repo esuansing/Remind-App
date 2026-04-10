@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { supabase } from './supabaseclient' // Ensure this matches your connection file name
+import { supabase } from './supabaseClient.js' // Ensure this matches your connection file name
 import Login from './login.jsx' // Changed to lowercase 'l' to match your file
 
 function App() {
