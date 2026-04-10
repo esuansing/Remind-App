@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { supabase } from './supabaseClient.js'
+import { supabase } from './supabaseclient.js'
 
 export default function Login() {
   const [loading, setLoading] = useState(false)
@@ -50,6 +50,34 @@ export default function Login() {
     setLoading(false)
   }
 
+  const handleForgotPassword = async () => {
+    setStatus({ msg: '', type: '' });
+
+    if (!email.includes('@')) {
+      setStatus({ msg: 'Please enter a valid email address.', type: 'error' });
+      return;
+    }
+
+    setLoading(true);
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      // This MUST match your Site URL in the Supabase Dashboard
+      redirectTo: 'https://esuansing.com',
+    });
+
+    if (error) {
+      setStatus({ msg: error.message, type: 'error' });
+    } else {
+      setStatus({ 
+        msg: 'Password reset email sent! Please check your inbox.', 
+        type: 'success' 
+      });
+    }
+    
+    setLoading(false);
+  };
+
+
   return (
   <>
     {/* These blobs create the color behind the glass */}
@@ -73,6 +101,13 @@ export default function Login() {
           </>
         )}
 
+        {view === 'FORGOT_PASSWORD' && (
+          <>
+          <h1 className="login-title">Reset Your Password</h1>
+          <p className="login-subtitle">Enter your email to receive a password reset link</p>
+          </>
+        )}
+
         <form 
           noValidate
           // className = {view === 'LOGIN' ? 'form-login-row' : 'form-signup-column'}
@@ -93,25 +128,36 @@ export default function Login() {
             value={email}
             onChange={(e) => setEmail(e.target.value)} 
           />
-          <input 
-            type="password" 
-            placeholder="Password" 
-            value={password}
-            onChange={(e) => setPassword(e.target.value)} 
-          />
+
+          {view !== 'FORGOT_PASSWORD' && (
+            <input 
+              type="password" 
+              placeholder="Password" 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)} 
+            />
+          )}
+          
           {status.msg && (
             <div className={`status-box ${status.type}`}>
               {status.msg}
             </div>
           )}
-          <button type="submit">
-            {loading ? 'Processing...' : view === 'LOGIN' ? 'Login' : 'Sign Up'}
-            </button>
+          <button type="submit" disabled={loading}>
+            {loading 
+              ? 'Processing...' 
+              : view === 'LOGIN' 
+                ? 'Login' 
+                : view === 'SIGNUP' 
+                  ? 'Sign Up' 
+                  : 'Send Reset Link'
+            }
+        </button>
         </form>
         <div className="glass-footer">
           {view === 'LOGIN' ? (
             <>
-            <button type="button" onClick={() => alert('Password reset not implemented yet')}>FORGOT PASSWORD?</button>
+            <button type="button" onClick={() => setView('FORGOT_PASSWORD')}>FORGOT PASSWORD?</button>
            <span className="separator">|</span>
             <button type="button" onClick={() => setView('SIGNUP')}>CREATE ACCOUNT</button>
             </>
