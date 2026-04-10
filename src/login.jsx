@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { supabase } from './supabaseclient.js'
+import { supabase } from './supabaseClient.js'
 
 export default function Login() {
   const [loading, setLoading] = useState(false)
@@ -19,9 +19,28 @@ export default function Login() {
   const handleAuth = async (type) => {
     setStatus({ msg: '', type: '' });
 
+    if (type === 'FORGOT_PASSWORD') {
+      if (!email) {
+        setStatus({ msg: 'Please enter your email.', type: 'error' });
+        return;
+      }
+      setLoading(true);
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: 'https://esuansing.com/update-password',
+      });
+      
+      if (error) {
+        setStatus({ msg: error.message, type: 'error' });
+      } else {
+        setStatus({ msg: 'Reset link sent! Check your inbox.', type: 'success' });
+      }
+      setLoading(false);
+      return; // Stop here so it doesn't try to login/signup
+    }
+
     if (!email.includes('@')) {
-    setStatus({ msg: 'Please enter a valid email address.', type: 'error' });
-    return;
+      setStatus({ msg: 'Please enter a valid email address.', type: 'error' });
+      return;
     }
     
     setLoading(true)
@@ -49,33 +68,6 @@ export default function Login() {
     }
     setLoading(false)
   }
-
-  const handleForgotPassword = async () => {
-    setStatus({ msg: '', type: '' });
-
-    if (!email.includes('@')) {
-      setStatus({ msg: 'Please enter a valid email address.', type: 'error' });
-      return;
-    }
-
-    setLoading(true);
-
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      // This MUST match your Site URL in the Supabase Dashboard
-      redirectTo: 'https://esuansing.com',
-    });
-
-    if (error) {
-      setStatus({ msg: error.message, type: 'error' });
-    } else {
-      setStatus({ 
-        msg: 'Password reset email sent! Please check your inbox.', 
-        type: 'success' 
-      });
-    }
-    
-    setLoading(false);
-  };
 
 
   return (
