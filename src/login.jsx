@@ -8,8 +8,13 @@ export default function Login() {
   const [username, setUsername] = useState('')
   const [view, setView] = useState('LOGIN')
   const [status, setStatus] = useState({ msg: '', type: '' });
+  const [confirmPassword, setConfirmPassword] = useState('')
 
   useEffect(() => {
+    if (window.location.hash.includes('type=recovery')) {
+      setView('UPDATE_PASSWORD');
+    }
+
     if (status.msg) {
       const timer = setTimeout(() => setStatus({ msg: '', type: '' }), 5000);
       return () => clearTimeout(timer);
@@ -69,6 +74,30 @@ export default function Login() {
     setLoading(false)
   }
 
+  const handleUpdatePassword = async () => {
+    if (password !== confirmPassword) {
+      setStatus({ msg: 'Passwords do not match!', type: 'error' });
+      return;
+    }
+
+    if (password.length < 6) {
+      setStatus({ msg: 'Password must be at least 6 characters.', type: 'error' });
+      return;
+    }
+
+    setLoading(true);
+    const { error } = await supabase.auth.updateUser({ password });
+
+    if (error) {
+      setStatus({ msg: error.message, type: 'error' });
+    } else {
+      setStatus({ msg: 'Password updated! Logging you in...', type: 'success' });
+      // Optional: Send them to login or wait for session to auto-update
+      setTimeout(() => setView('LOGIN'), 2000);
+    }
+    setLoading(false);
+  };
+
 
   return (
   <>
@@ -100,10 +129,24 @@ export default function Login() {
           </>
         )}
 
+        {view === 'UPDATE_PASSWORD' && (
+          <>
+          <h1 className="login-title">Reset Your Password</h1>
+          <p className="login-subtitle">Type in your new password</p>
+          </>
+        )}
+
         <form 
           noValidate
           // className = {view === 'LOGIN' ? 'form-login-row' : 'form-signup-column'}
-          onSubmit={(e) => { e.preventDefault(); handleAuth(view); }}
+          onSubmit={(e) => { 
+            e.preventDefault(); 
+            if (view === 'UPDATE_PASSWORD') {
+              handleUpdatePassword();
+            } else {
+              handleAuth(view); 
+            }
+          }}
         >
           {view === 'SIGNUP' && (
             <input 
@@ -114,12 +157,14 @@ export default function Login() {
             />
           )}
 
-          <input 
-            type="email" 
-            placeholder = {view === 'LOGIN' ? "Email or Username" : "Email Address" }
-            value={email}
-            onChange={(e) => setEmail(e.target.value)} 
-          />
+          {view !== 'UPDATE_PASSWORD' && (
+            <input 
+              type="email" 
+              placeholder = {view === 'LOGIN' ? "Email or Username" : "Email Address" }
+              value={email}
+              onChange={(e) => setEmail(e.target.value)} 
+            />
+          )}
 
           {view !== 'FORGOT_PASSWORD' && (
             <input 
@@ -129,22 +174,31 @@ export default function Login() {
               onChange={(e) => setPassword(e.target.value)} 
             />
           )}
+
+          {view === 'UPDATE_PASSWORD' && (
+            <input 
+              type="password" 
+              placeholder="Confirm New Password" 
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)} 
+            />
+          )}
           
           {status.msg && (
             <div className={`status-box ${status.type}`}>
               {status.msg}
             </div>
           )}
+
           <button type="submit" disabled={loading}>
             {loading 
               ? 'Processing...' 
-              : view === 'LOGIN' 
-                ? 'Login' 
-                : view === 'SIGNUP' 
-                  ? 'Sign Up' 
-                  : 'Send Reset Link'
+              : view === 'LOGIN' ? 'Login' 
+              : view === 'SIGNUP' ? 'Sign Up' 
+              : view === 'FORGOT_PASSWORD' ? 'Send Reset Link'
+              : 'Update Password' // This is for UPDATE_PASSWORD
             }
-        </button>
+          </button>
         </form>
         <div className="glass-footer">
           {view === 'LOGIN' ? (

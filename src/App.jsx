@@ -6,6 +6,10 @@ function App() {
   const [session, setSession] = useState(null)
 
   useEffect(() => {
+    if (window.location.hash.includes('type=recovery')) {
+      return; 
+    }
+
     // Check for an active session when the app loads
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
